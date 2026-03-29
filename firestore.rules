@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ===============================================================
+    // Data Validation
+    // ===============================================================
+    function isValidCustomer(data) {
+      return data.keys().hasAll(['name', 'contact', 'vehicle']) &&
+             data.keys().hasOnly(['name', 'contact', 'vehicle', 'dob', 'visitHistory']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.contact is string && data.contact.size() > 0 && data.contact.size() < 100 &&
+             data.vehicle is string && data.vehicle.size() > 0 && data.vehicle.size() < 100 &&
+             (data.dob is string && data.dob.size() < 20 || !('dob' in data)) &&
+             (data.visitHistory is list && data.visitHistory.size() < 100 || !('visitHistory' in data));
+    }
+
+    // ===============================================================
+    // Collections
+    // ===============================================================
+    match /customers/{customerId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidCustomer(request.resource.data);
+      allow update: if isAuthenticated() && isValidCustomer(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
+    match /services/{serviceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    match /inventory/{itemId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    match /invoices/{invoiceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+  }
+}

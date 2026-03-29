@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "contact": { "type": "string" },
+        "vehicle": { "type": "string" },
+        "dob": { "type": "string", "format": "date" },
+        "visitHistory": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "contact", "vehicle"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Service details",
+      "type": "object",
+      "properties": {
+        "mainCategory": { "type": "string" },
+        "subCategory": { "type": "string" },
+        "scope": { "type": "string" },
+        "basePrice": { "type": "number" }
+      },
+      "required": ["mainCategory", "subCategory", "scope", "basePrice"]
+    },
+    "InventoryItem": {
+      "title": "InventoryItem",
+      "description": "Inventory item details",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "stockLevel": { "type": "number" },
+        "unitType": { "type": "string" }
+      },
+      "required": ["name", "stockLevel", "unitType"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Invoice details",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "serviceIds": { "type": "array", "items": { "type": "string" } },
+        "totalCost": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "serviceIds", "totalCost", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": { "schema": { "$ref": "Customer" }, "description": "Customers collection" },
+    "/services/{serviceId}": { "schema": { "$ref": "Service" }, "description": "Services collection" },
+    "/inventory/{itemId}": { "schema": { "$ref": "InventoryItem" }, "description": "Inventory collection" },
+    "/invoices/{invoiceId}": { "schema": { "$ref": "Invoice" }, "description": "Invoices collection" }
+  }
+}
